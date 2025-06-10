@@ -39,13 +39,17 @@
             label5 = new Label();
             _bonusPointsUpDown = new NumericUpDown();
             label6 = new Label();
-            _boardSizeComboBox = new ComboBox();
+            _boardXUpDown = new NumericUpDown();
+            label7 = new Label();
+            _boardYUpDown = new NumericUpDown();
             panel1 = new Panel();
             _lockoutCheckBox = new CheckBox();
+            _squareCheckBox = new CheckBox();
             panel2 = new Panel();
             panel3 = new Panel();
             panel4 = new Panel();
             panel6 = new Panel();
+            panel7 = new Panel();
             ((System.ComponentModel.ISupportInitialize)_maxCategoryUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)_randomSeedUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)_preparationTimeUpDown).BeginInit();
@@ -55,6 +59,7 @@
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             panel6.SuspendLayout();
+            panel7.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -152,23 +157,41 @@
             label6.Name = "label6";
             label6.Size = new Size(63, 15);
             label6.TabIndex = 1;
-            label6.Text = "Board size:";
+            label6.Text = "Board size (x):";
             // 
-            // _boardSizeComboBox
+            // _boardXUpDown
             // 
-            _boardSizeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            _boardSizeComboBox.FormattingEnabled = true;
-            _boardSizeComboBox.Location = new Point(73, 1);
-            _boardSizeComboBox.MaxDropDownItems = 6;
-            _boardSizeComboBox.Name = "_boardSizeComboBox";
-            _boardSizeComboBox.Size = new Size(100, 23);
-            _boardSizeComboBox.TabIndex = 2;
+            _boardXUpDown.Location = new Point(93, 1);
+            _boardXUpDown.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
+            _boardXUpDown.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
+            _boardXUpDown.Name = "_boardXUpDown";
+            _boardXUpDown.Size = new Size(80, 23);
+            _boardXUpDown.TabIndex = 2;
+            _boardXUpDown.ValueChanged += boardXUpDownChanged;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(4, 4);
+            label7.Name = "label6";
+            label7.Size = new Size(63, 15);
+            label7.TabIndex = 1;
+            label7.Text = "Board size (y):";
+            // 
+            // _boardYUpDown
+            // 
+            _boardYUpDown.Location = new Point(93, 1);
+            _boardYUpDown.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
+            _boardYUpDown.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
+            _boardYUpDown.Name = "_boardYUpDown";
+            _boardYUpDown.Size = new Size(80, 23);
+            _boardYUpDown.TabIndex = 2;
             // 
             // panel1
             // 
             panel1.Controls.Add(_lockoutCheckBox);
             panel1.Controls.Add(label6);
-            panel1.Controls.Add(_boardSizeComboBox);
+            panel1.Controls.Add(_boardXUpDown);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
@@ -185,13 +208,35 @@
             _lockoutCheckBox.Text = "Lockout";
             _lockoutCheckBox.UseVisualStyleBackColor = true;
             // 
+            // panel7
+            // 
+            panel7.Controls.Add(_squareCheckBox);
+            panel7.Controls.Add(label7);
+            panel7.Controls.Add(_boardYUpDown);
+            panel7.Dock = DockStyle.Top;
+            panel7.Location = new Point(0, 30);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(256, 30);
+            panel7.TabIndex = 0;
+            // 
+            // _squareCheckBox
+            // 
+            _squareCheckBox.AutoSize = true;
+            _squareCheckBox.Location = new Point(180, 3);
+            _squareCheckBox.Name = "_squareCheckBox";
+            _squareCheckBox.Size = new Size(69, 19);
+            _squareCheckBox.TabIndex = 19;
+            _squareCheckBox.Text = "Square";
+            _squareCheckBox.UseVisualStyleBackColor = true;
+            _squareCheckBox.CheckedChanged += squareCheckBox_Changed;
+            // 
             // panel2
             // 
             panel2.Controls.Add(label1);
             panel2.Controls.Add(_randomSeedUpDown);
             panel2.Controls.Add(button1);
             panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 30);
+            panel2.Location = new Point(0, 60);
             panel2.Name = "panel2";
             panel2.Size = new Size(256, 30);
             panel2.TabIndex = 3;
@@ -202,7 +247,7 @@
             panel3.Controls.Add(_preparationTimeUpDown);
             panel3.Controls.Add(label4);
             panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(0, 60);
+            panel3.Location = new Point(0, 90);
             panel3.Name = "panel3";
             panel3.Size = new Size(256, 30);
             panel3.TabIndex = 7;
@@ -212,7 +257,7 @@
             panel4.Controls.Add(label5);
             panel4.Controls.Add(_bonusPointsUpDown);
             panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 90);
+            panel4.Location = new Point(0, 120);
             panel4.Name = "panel4";
             panel4.Size = new Size(256, 30);
             panel4.TabIndex = 11;
@@ -222,7 +267,7 @@
             panel6.Controls.Add(label2);
             panel6.Controls.Add(_maxCategoryUpDown);
             panel6.Dock = DockStyle.Top;
-            panel6.Location = new Point(0, 120);
+            panel6.Location = new Point(0, 150);
             panel6.Name = "panel6";
             panel6.Size = new Size(256, 30);
             panel6.TabIndex = 18;
@@ -235,9 +280,10 @@
             Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(panel2);
+            Controls.Add(panel7);
             Controls.Add(panel1);
             Name = "GameSettingsControl";
-            Size = new Size(256, 149);
+            Size = new Size(256, 179);
             ((System.ComponentModel.ISupportInitialize)_maxCategoryUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)_randomSeedUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)_preparationTimeUpDown).EndInit();
@@ -252,6 +298,8 @@
             panel4.PerformLayout();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
+            panel7.ResumeLayout(false);
+            panel7.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -268,12 +316,17 @@
         private Label label5;
         private NumericUpDown _bonusPointsUpDown;
         private Label label6;
-        private ComboBox _boardSizeComboBox;
+        private NumericUpDown _boardXUpDown;
+        private Label label7;
+        private NumericUpDown _boardYUpDown;
+        //private ComboBox _boardSizeComboBox;
         private Panel panel1;
         private Panel panel2;
         private Panel panel3;
         private Panel panel4;
         private Panel panel6;
+        private Panel panel7;
         private CheckBox _lockoutCheckBox;
+        private CheckBox _squareCheckBox;
     }
 }

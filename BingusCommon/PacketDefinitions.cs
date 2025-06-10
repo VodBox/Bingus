@@ -12,7 +12,7 @@ public record ServerUserCoordinates(Guid UserGuid, float X, float Y, float Angle
 public record ServerAdminStatusMessage(string Message, int Color);
 public record ServerUserChat(Guid UserGuid, string Message);
 public record ServerMatchStatusUpdate(MatchStatus MatchStatus, bool Paused, int Timer);
-public record ServerEntireBingoBoardUpdate(int Size, bool Lockout, BingoBoardSquare[] Squares, EldenRingClasses[] AvailableClasses);
+public record ServerEntireBingoBoardUpdate(int SizeX, int SizeY, bool Lockout, BingoBoardSquare[] Squares, EldenRingClasses[] AvailableClasses);
 public record ServerScoreboardUpdate(TeamScore[] Scoreboard);
 public record ServerBingoAchievedUpdate(BingoLine Bingo);
 public record ServerSquareUpdate(BingoBoardSquare Square, int Index);

@@ -200,8 +200,8 @@ namespace Bingus
         {
             if (Room != null)
             {
-                Room.Match.Board = boardUpdate.Size > 0 && boardUpdate.Squares.Length == boardUpdate.Size * boardUpdate.Size ?
-                    new BingoBoard(boardUpdate.Size, boardUpdate.Lockout, boardUpdate.Squares, boardUpdate.AvailableClasses) :
+                Room.Match.Board = boardUpdate.SizeX > 0 && boardUpdate.SizeY > 0 && boardUpdate.Squares.Length == boardUpdate.SizeX * boardUpdate.SizeY ?
+                    new BingoBoard(boardUpdate.SizeX, boardUpdate.SizeY, boardUpdate.Lockout, boardUpdate.Squares, boardUpdate.AvailableClasses) :
                     null;
             }
         }

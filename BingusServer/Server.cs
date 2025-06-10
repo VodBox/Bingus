@@ -87,7 +87,7 @@ namespace BingusServer
         public override async Task Stop()
         {
             serializeServer();
-            if (Hosting) 
+            if (Hosting)
                 await base.Stop();
         }
 
@@ -314,7 +314,8 @@ namespace BingusServer
 
         private BingoGameSettings validateGameSettings(BingoGameSettings settings)
         {
-            settings.BoardSize = Math.Clamp(settings.BoardSize, BingoConstants.BoardSizeMin, BingoConstants.BoardSizeMax);
+            settings.BoardSizeX = Math.Clamp(settings.BoardSizeX, BingoConstants.BoardSizeMin, BingoConstants.BoardSizeMax);
+            settings.BoardSizeY = Math.Clamp(settings.BoardSizeY, BingoConstants.BoardSizeMin, BingoConstants.BoardSizeMax);
             settings.PreparationTime = Math.Max(0, settings.PreparationTime);
             settings.NumberOfClasses = Math.Max(1, settings.NumberOfClasses);
             settings.CategoryLimit = Math.Max(0, settings.CategoryLimit);
@@ -497,7 +498,7 @@ namespace BingusServer
             if (matchStatus.MatchStatus == MatchStatus.Starting && sender.Room.Match != null && sender.Room.BoardGenerator != null)
             {
                 //Generate a board if no board is set or if the current board was used in last bingo, or if current board is wrong size
-                if (sender.Room.Match.Board == null || sender.Room.BoardAlreadyUsed || sender.Room.Match.Board.Size != sender.Room.GameSettings.BoardSize)
+                if (sender.Room.Match.Board == null || sender.Room.BoardAlreadyUsed || sender.Room.Match.Board.SizeX != sender.Room.GameSettings.BoardSizeX || sender.Room.Match.Board.SizeY != sender.Room.GameSettings.BoardSizeY)
                 {
                     var board = sender.Room.BoardGenerator.CreateBingoBoard(sender.Room);
                     if (board != null)
@@ -521,7 +522,7 @@ namespace BingusServer
             {
                 if (matchStatus.MatchStatus == MatchStatus.Starting)
                 {
-                    var p = new Packet(new ServerEntireBingoBoardUpdate(0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>()));
+                    var p = new Packet(new ServerEntireBingoBoardUpdate(0, 0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>()));
                     //Reset the board for all players (except AdminSpectators, who already have the new board)
                     await SendPacketToClients(p, sender.Room.ClientModels.Where(c => !(c.IsAdmin && c.IsSpectator)));
                 }
@@ -674,7 +675,7 @@ namespace BingusServer
             }
             var matchInProgress = sender.Room?.Match?.MatchStatus > MatchStatus.NotRunning && sender.Room?.Match?.MatchStatus < MatchStatus.Finished;
             //If size was changed when match was not running and the generated board size is different than the new one -> Generate new board
-            if (!matchInProgress && sender.Room?.Match?.Board != null && sender.Room.Match.Board.Size != settings.BoardSize)
+            if (!matchInProgress && sender.Room?.Match?.Board != null && (sender.Room.Match.Board.SizeX != settings.BoardSizeX || sender.Room.Match.Board.SizeY != settings.BoardSizeY))
             {
                 clientRandomizeBoard(sender, new ClientRandomizeBoard());
             }
@@ -758,7 +759,7 @@ namespace BingusServer
                 {
                     currentUsers.Add(new UserInRoom(user));
                 }
-                
+
                 var teamColorName = room.GetTeamNameIgnoreUsers(change.Team);
 
                 var teamChangePacket = new ServerUserChangedTeam(sender.ClientGuid, newTeam, teamColorName, currentUsers.ToArray());
@@ -779,7 +780,7 @@ namespace BingusServer
                             for (int i = 0; i < board.CheckStatus.Length; ++i)
                             {
                                 var check = board.CheckStatus[i];
-                                
+
                                 if (recipient.IsSpectator && check.AnyCounters() || check.GetCounter(userInfo) > 0)
                                 {
                                     packet.AddObject(new ServerSquareUpdate(board.GetSquareDataForUser(recipient, i, activeTeams), i));
@@ -803,9 +804,9 @@ namespace BingusServer
         private ServerEntireBingoBoardUpdate createEntireBoardPacket(ServerBingoBoard? board, UserInRoom user)
         {
             if (board == null)
-                return new ServerEntireBingoBoardUpdate(0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>());
+                return new ServerEntireBingoBoardUpdate(0, 0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>());
             var squareData = board.GetSquareDataForUser(user);
-            return new ServerEntireBingoBoardUpdate(board.Size, board.Lockout, squareData, board.AvailableClasses);
+            return new ServerEntireBingoBoardUpdate(board.SizeX, board.SizeY, board.Lockout, squareData, board.AvailableClasses);
         }
 
         private ServerScoreboardUpdate createScoreboardUpdatePacket(ServerRoom room)
@@ -931,7 +932,7 @@ namespace BingusServer
             if (room.Match?.Board == null || room.Match?.Board is not ServerBingoBoard board)
             {
                 //No board set, so we send an empty board
-                await sendPacketToRoom(new Packet(new ServerEntireBingoBoardUpdate(0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>())), room);
+                await sendPacketToRoom(new Packet(new ServerEntireBingoBoardUpdate(0, 0, true, Array.Empty<BingoBoardSquare>(), Array.Empty<EldenRingClasses>())), room);
                 return;
             }
 

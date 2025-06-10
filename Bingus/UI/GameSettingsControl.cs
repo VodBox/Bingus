@@ -7,17 +7,10 @@ namespace Bingus.UI
         public GameSettingsControl()
         {
             InitializeComponent();
-            fillBoardSizeList();
             _randomSeedUpDown.ValueChanged += (o, e) => SeedChanged?.Invoke();
         }
 
         public int CurrentSeed => Convert.ToInt32(_randomSeedUpDown.Value);
-
-        private int BoardSize
-        {
-            get { return _boardSizeComboBox.SelectedIndex + 3; }
-            set { _boardSizeComboBox.SelectedIndex = value - 3; }
-        }
 
         public Action? SeedChanged;
 
@@ -26,7 +19,8 @@ namespace Bingus.UI
             get
             {
                 return new BingoGameSettings(
-                    BoardSize,
+                    Convert.ToInt32(_boardXUpDown.Value),
+                    Convert.ToInt32(_boardYUpDown.Value),
                     _lockoutCheckBox.Checked,
                     false,
                     new HashSet<EldenRingClasses>(),
@@ -39,26 +33,35 @@ namespace Bingus.UI
             }
             set
             {
-                BoardSize = value.BoardSize;
+                _boardXUpDown.Value = value.BoardSizeX;
+                _boardYUpDown.Value = value.BoardSizeY;
+                _boardYUpDown.Enabled = value.BoardSizeX != value.BoardSizeY;
                 _lockoutCheckBox.Checked = value.Lockout;
                 _maxCategoryUpDown.Value = value.CategoryLimit;
                 _randomSeedUpDown.Value = value.RandomSeed;
                 _preparationTimeUpDown.Value = value.PreparationTime;
                 _bonusPointsUpDown.Value = value.PointsPerBingoLine;
+                _squareCheckBox.Checked = value.BoardSizeX == value.BoardSizeY;
             }
-        }
-
-        private void fillBoardSizeList()
-        {
-            for(int i = BingoConstants.BoardSizeMin; i <= BingoConstants.BoardSizeMax; ++i)
-            {
-                _boardSizeComboBox.Items.Add($"{i}x{i}");
-            };
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             _randomSeedUpDown.Value = 0;
+        }
+
+        private void squareCheckBox_Changed(object sender, EventArgs e)
+        {
+            _boardYUpDown.Enabled = !_squareCheckBox.Checked;
+            _boardYUpDown.Value = _boardXUpDown.Value;
+        }
+
+        private void boardXUpDownChanged(object sender, EventArgs e)
+        {
+            if (_squareCheckBox.Checked)
+            {
+                _boardYUpDown.Value = _boardXUpDown.Value;
+            }
         }
     }
 }

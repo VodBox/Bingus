@@ -124,9 +124,9 @@ namespace BingusServer
 
     public class ServerBingoBoard : BingoBoard
     {
-        public ServerBingoBoard(ServerRoom room, int size, bool lockout, BingoBoardSquare[] squares, EldenRingClasses[] availableClasses) : base(size, lockout, squares, availableClasses)
+        public ServerBingoBoard(ServerRoom room, int sizeX, int sizeY, bool lockout, BingoBoardSquare[] squares, EldenRingClasses[] availableClasses) : base(sizeX, sizeY, lockout, squares, availableClasses)
         {
-            var sizeSqr = size * size;
+            var sizeSqr = sizeX * sizeY;
             CheckStatus = new CheckStatus[sizeSqr];
             Room = room;
             for (int i = 0; i < CheckStatus.Length; ++i)
@@ -284,11 +284,11 @@ namespace BingusServer
             
             void findBingo(int startx, int starty, int dx, int dy)
             {
-                int index(int x, int y) { return x + y * Size; }
+                int index(int x, int y) { return x + y * SizeX; }
                 int x = startx;
                 int y = starty;
                 var squaresCountPerTeam = new Dictionary<int, int>();
-                for (int i = 0; i < Size; ++i)
+                for (int i = 0; i < SizeX; ++i)
                 {
                     var s = CheckStatus[index(x, y)];
                     foreach (var t in s.Teams)
@@ -303,7 +303,7 @@ namespace BingusServer
                 }
                 foreach(var teamCount in squaresCountPerTeam)
                 {
-                    if (teamCount.Value != Size)
+                    if (teamCount.Value != SizeX)
                         continue; //Skip teams that didn't fill the entire line
 
                     if (!bingosPerTeam.TryGetValue(teamCount.Key, out var list))
@@ -332,19 +332,19 @@ namespace BingusServer
                     }
                 }
             }
-            for (int x = 0; x < Size; ++x)
+            for (int x = 0; x < SizeX; ++x)
             {
                 findBingo(x, 0, 0, 1);
             }
 
-            for (int y = 0; y < Size; ++y)
+            for (int y = 0; y < SizeX; ++y)
             {
                 findBingo(0, y, 1, 0);
             }
             //Top-left to bottom-right
             findBingo(0, 0, 1, 1);
             //Bottom-left to top-right
-            findBingo(0, Size - 1, 1, -1);
+            findBingo(0, SizeX - 1, 1, -1);
 
             return bingosPerTeam;
         }

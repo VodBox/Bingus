@@ -116,7 +116,10 @@
     <Setting Name="GS_BonusPerBingo" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="GS_BoardSize" Type="System.Int32" Scope="User">
+    <Setting Name="GS_BoardSizeX" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="GS_BoardSizeY" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="GS_ShowPlayerTeam" Type="System.Boolean" Scope="User">

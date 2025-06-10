@@ -87,7 +87,7 @@ namespace BingusServer
             var squares = new List<BingoJsonObj>();
             var categoryCount = new Dictionary<string, int>();
 
-            var numSquares = room.GameSettings.BoardSize * room.GameSettings.BoardSize;
+            var numSquares = room.GameSettings.BoardSizeX * room.GameSettings.BoardSizeY;
             bool anySquareFailedCategoryLimit = false;
 
             //var anyCenterSpecifics = squareList.Any(s => s.CenterType > CenterType.None);
@@ -178,7 +178,8 @@ namespace BingusServer
                 _random.Next(); //Skip a number to ensure consistency in random number generation
             }
             return new ServerBingoBoard(room,
-                room.GameSettings.BoardSize,
+                room.GameSettings.BoardSizeX,
+                room.GameSettings.BoardSizeY,
                 room.GameSettings.Lockout,
                 squares.Select(s =>
                     new BingoBoardSquare(

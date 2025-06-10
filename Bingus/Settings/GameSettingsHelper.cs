@@ -25,7 +25,8 @@ namespace Bingus.Settings
                 }
             }
             var gameSettings = new BingoGameSettings(
-                settings.GS_BoardSize,
+                settings.GS_BoardSizeX,
+                settings.GS_BoardSizeY,
                 settings.GS_Lockout,
                 settings.GS_RandomizeClasses,
                 classes,
@@ -40,7 +41,8 @@ namespace Bingus.Settings
 
         internal static void SaveToSettings(BingoGameSettings gameSettings, Properties.Settings settings)
         {
-            settings.GS_BoardSize = gameSettings.BoardSize;
+            settings.GS_BoardSizeX = gameSettings.BoardSizeX;
+            settings.GS_BoardSizeY = gameSettings.BoardSizeY;
             settings.GS_Lockout = gameSettings.Lockout;
             settings.GS_RandomizeClasses = gameSettings.RandomClasses;
             settings.GS_Classes = string.Join(",", gameSettings.ValidClasses.Select(c => (int)c));

@@ -4,23 +4,25 @@ namespace BingusCommon
 {
     public class BingoBoard
     {
-        public BingoBoard(int size, bool lockout, BingoBoardSquare[] squares, EldenRingClasses[] availableClasses)
+        public BingoBoard(int sizeX, int sizeY, bool lockout, BingoBoardSquare[] squares, EldenRingClasses[] availableClasses)
         {
-            Size = size;
+            SizeX = sizeX;
+            SizeY = sizeY;
             Lockout = lockout;
-            if (squares.Length != size * size)
-                throw new ArgumentException($"Needs exactly {size * size} squares");
+            if (squares.Length != sizeX * sizeY)
+                throw new ArgumentException($"Needs exactly {sizeX * sizeY} squares");
             Squares = squares;
             AvailableClasses = availableClasses;
-            
+
         }
 
-        public int Size { get; init; }
-        public int SquareCount => Size * Size;
+        public int SizeX { get; init; }
+        public int SizeY { get; init; }
+        public int SquareCount => SizeX * SizeY;
         public BingoBoardSquare[] Squares { get; init; }
         public EldenRingClasses[] AvailableClasses { get; init; }
         public bool Lockout { get; init; }
-        
+
     }
 
     public record struct BingoBoardSquare(string Text, string Tooltip, int[] Team, bool Marked, SquareCounter[] Counters)
@@ -35,7 +37,7 @@ namespace BingusCommon
         public bool Marked { get; set; } = Marked;
         [JsonIgnore]
         public SquareCounter[] Counters { get; set; } = Counters;
-        
+
         public bool IsChecked(int team)
         {
             return Team.Contains(team);

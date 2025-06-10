@@ -12,7 +12,7 @@ namespace Bingus.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -482,12 +482,24 @@ namespace Bingus.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int GS_BoardSize {
+        public int GS_BoardSizeX {
             get {
-                return ((int)(this["GS_BoardSize"]));
+                return ((int)(this["GS_BoardSizeX"]));
             }
             set {
-                this["GS_BoardSize"] = value;
+                this["GS_BoardSizeX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int GS_BoardSizeY {
+            get {
+                return ((int)(this["GS_BoardSizeY"]));
+            }
+            set {
+                this["GS_BoardSizeY"] = value;
             }
         }
         

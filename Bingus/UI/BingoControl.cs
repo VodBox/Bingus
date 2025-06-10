@@ -23,7 +23,8 @@ namespace Bingus.UI
         private BingoSquareControl[] Squares;
         private System.Timers.Timer? _timer;
 
-        private int _size;
+        private int _sizeX;
+        private int _sizeY;
 
         public int[] ActiveTeams { get; private set; }
 
@@ -35,9 +36,10 @@ namespace Bingus.UI
             _boardStatusLabel.BackColor = BgColor;
             _gridControl.SetAspectRatio(AspectRatio);
             _gridControl.MaintainAspectRatio = true;
-            _size = 0;
+            _sizeX = 0;
+            _sizeY = 0;
             Squares = new BingoSquareControl[0];
-            initSquareControls(_size);
+            initSquareControls(_sizeX, _sizeY);
             Load += bingoControl_Load;
             SizeChanged += bingoControl_SizeChanged;
             _gridControl.SizeChanged += _gridControl_SizeChanged;
@@ -53,20 +55,21 @@ namespace Bingus.UI
             BoardRevealed,
         }
 
-        private void initSquareControls(int size)
+        private void initSquareControls(int sizeX, int sizeY)
         {
-            var targetSquares = size * size;
-            _gridControl.GridWidth = size;
-            _gridControl.GridHeight = size;
-            if (_size > size)
+            var sourceSquares = _sizeX * _sizeY;
+            var targetSquares = sizeX * sizeY;
+            _gridControl.GridWidth = sizeX;
+            _gridControl.GridHeight = sizeY;
+            if (sourceSquares > targetSquares)
             {
-                while(_gridControl.Controls.Count > targetSquares)
+                while (_gridControl.Controls.Count > targetSquares)
                 {
                     var lastIndex = _gridControl.Controls.Count - 1;
                     _gridControl.Controls.RemoveAt(lastIndex);
                 }
             }
-            else if(_size < size)
+            else if (sourceSquares < targetSquares)
             {
                 int i = _gridControl.Controls.Count;
                 while (_gridControl.Controls.Count < targetSquares)
@@ -76,11 +79,13 @@ namespace Bingus.UI
                     _gridControl.Controls.Add(squareControl);
                 }
             }
-            if (_size != size) 
+            if (_sizeX != sizeX || _sizeY != sizeY)
             {
                 var squareList = new List<BingoSquareControl>(_gridControl.Controls.OfType<BingoSquareControl>());
                 Squares = squareList.ToArray();
-                _size = size;
+                _sizeX = sizeX;
+                _sizeY = sizeY;
+                _gridControl.SetAspectRatio(sizeX * 1.1f / sizeY);
             }
         }
 
@@ -88,10 +93,10 @@ namespace Bingus.UI
         {
             void flashSquares(int startx, int starty, int dx, int dy)
             {
-                int index(int x, int y) { return y * _size + x; }
+                int index(int x, int y) { return y * _sizeX + x; }
                 var x = startx;
                 var y = starty;
-                for (int i = 0; i < _size; ++i)
+                for (int i = 0; i < _sizeX; ++i)
                 {
                     Squares[index(x, y)].BingoAnimationTimer = BingoAnimationTimerMax;
                     x += dx;
@@ -113,7 +118,7 @@ namespace Bingus.UI
                     break;
 
                 case 3:
-                    flashSquares(0, _size - 1, 1, -1);
+                    flashSquares(0, _sizeX - 1, 1, -1);
                     break;
             }
             startTimer();
@@ -230,7 +235,7 @@ namespace Bingus.UI
 
         private void squareUpdate(ClientModel? _, ServerSquareUpdate update)
         {
-            if (Client?.BingoBoard != null && update.Index >= 0 && update.Index < _size * _size)
+            if (Client?.BingoBoard != null && update.Index >= 0 && update.Index < _sizeX * _sizeY)
             {
                 Client.BingoBoard.Squares[update.Index] = update.Square;
                 updateSquareStatus(Client.BingoBoard, update.Index, Properties.Settings.Default.MarkHighlight);
@@ -256,7 +261,7 @@ namespace Bingus.UI
 
         private void bingoUpdate(ClientModel? _, ServerBingoAchievedUpdate update)
         {
-            if(Properties.Settings.Default.BingoHighlight)
+            if (Properties.Settings.Default.BingoHighlight)
                 FlashBingo(update.Bingo);
         }
 
@@ -328,7 +333,7 @@ namespace Bingus.UI
         {
             void update()
             {
-                initSquareControls(0);
+                initSquareControls(0, 0);
                 Invalidate();
             }
             if (InvokeRequired)
@@ -347,7 +352,7 @@ namespace Bingus.UI
             {
                 recalculateFontSizeForSquares();
             }
-            if(e.PropertyName == nameof(Properties.Settings.SquareShadows))
+            if (e.PropertyName == nameof(Properties.Settings.SquareShadows))
             {
                 redrawAllSquares();
             }
@@ -364,7 +369,7 @@ namespace Bingus.UI
         {
             var mainForm = MainForm.GetMainForm(this);
             if (mainForm != null)
-            {                
+            {
                 mainForm.RawInput.KeyPressed += keyPressed;
                 mainForm.RawInput.MouseWheel += mouseWheel;
             }
@@ -388,8 +393,8 @@ namespace Bingus.UI
 
             var bingoFontSize = squareHeight / 10f;
             var font = MainForm.GetFontFromSettings(Font, bingoFontSize / scale.Height);
-            
-            foreach(var square in Squares)
+
+            foreach (var square in Squares)
             {
                 square.Font = font;
             }
@@ -404,7 +409,7 @@ namespace Bingus.UI
                     clearBoard();
                     return;
                 }
-                initSquareControls(board.Size);
+                initSquareControls(board.SizeX, board.SizeY);
                 recalculateFontSizeForSquares();
                 for (int i = 0; i < board.SquareCount; ++i)
                 {
@@ -807,7 +812,7 @@ namespace Bingus.UI
                 var g = e.Graphics;
                 bool isChecked = _teams.Length > 0;
                 //Draw empty background
-                if(_teams.Length == 0)
+                if (_teams.Length == 0)
                 {
                     Color color = BgColor;
                     if (MouseOver)
@@ -839,7 +844,7 @@ namespace Bingus.UI
                     var numTeams = teamIndex.Count;
                     if (numTeams > 0)
                     {
-                        if(numTeams > 1)
+                        if (numTeams > 1)
                             g.SmoothingMode = SmoothingMode.AntiAlias;
                         foreach (var team in _teams)
                         {
