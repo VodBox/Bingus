@@ -83,7 +83,7 @@ namespace BingusServer
 
         public ServerBingoBoard? CreateBingoBoard(ServerRoom room)
         {
-            var squareList = new List<BingoJsonObj>(shuffleList(_list, _random));
+            var squareList = new List<BingoJsonObj>(room.GameSettings.RandomSeed == -1 ? _list : shuffleList(_list, _random));
             var squares = new List<BingoJsonObj>();
             var categoryCount = new Dictionary<string, int>();
 
